@@ -70,15 +70,21 @@ sel = mod.selection # Current selection
 ent.clear!
 
 width = 12
-length = 144
+length = 12 * 12 # 12 feet
 thickness = 1.5
 heightRatio = 1.5
 maxRotation = 8.5.degrees
+cutKerf = 0.25 # length of board lost to each cut
+boardEnd = 1 # length to cut off of each end to clean it up
+lumber_length = 16 * 12 # 16 feet
 
-totalHeight = length*heightRatio
+totalHeight = length * heightRatio
+puts( 'Tree height: ' + (totalHeight / 12).to_s )
 
 height = 0
 rotation = 0
+num_boards = 0
+current_board_remaining = 0
 
 while height < (totalHeight - (width * heightRatio)) do
   boardGroup = ent.add_group
@@ -96,5 +102,17 @@ while height < (totalHeight - (width * heightRatio)) do
   rotation += angle * 2
   #puts 'Ang: ' << String(angle) << ' opp: ' << String(opposite) << ' adj: ' << String(adjacent) << ' rot: ' << String(rotation)
   moveBoard!(boardGroup, height, rotation)
+  
   height += thickness
+   
+  if (boardLength + cutKerf) > current_board_remaining
+    num_boards += 1
+    current_board_remaining = lumber_length - (2 * boardEnd)
+  end
+  current_board_remaining += -(boardLength + cutKerf)
+  
+  puts( 'num boards: ' + num_boards.to_s + ' cur len: ' + boardLength.to_s + ' remaining: ' + current_board_remaining.to_s )
+  
 end
+
+puts( 'Number boards: ' + num_boards.to_s )
